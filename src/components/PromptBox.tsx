@@ -2,7 +2,15 @@
 import { ArrowUp, Globe, ImagePlus, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
-import { fileToDataUrl } from "@/lib/client/image";
+import { fileToDataUrl, samplePalette } from "@/lib/client/image";
+
+export const PENDING_KEY = "designdna:pending";
+
+export async function createProject(payload: { url?: string; image?: string; palette?: string[] }) {
+  const res = await fetch("/api/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const j = await res.json().catch(() => ({}));
+  return { status: res.status, id: j.id as string | undefined, error: j.error as string | undefined };
+}
 
 const EXAMPLES = ["stripe.com", "linear.app", "vercel.com", "notion.com", "airbnb.com", "apple.com"];
 
@@ -22,18 +30,26 @@ export function PromptBox() {
     setImage({ url: await fileToDataUrl(f), name: f.name || "screenshot.png" });
   }, []);
 
-  const submit = (override?: string) => {
+  const submit = async (override?: string) => {
     const v = (override ?? value).trim();
+    let payload: { url?: string; image?: string; palette?: string[] };
     if (image) {
-      setBusy(true);
-      sessionStorage.setItem("designdna:pending-image", image.url);
-      router.push("/studio?mode=image");
+      payload = { image: image.url, palette: await samplePalette(image.url).catch(() => []) };
+    } else {
+      if (!v) return setErr("Paste a website URL or attach a screenshot.");
+      if (!/^(https?:\/\/)?[\w-]+(\.[\w-]+)+/.test(v)) return setErr("That doesn't look like a URL. Try something like stripe.com");
+      payload = { url: v };
+    }
+    setBusy(true); setErr("");
+    const r = await createProject(payload);
+    if (r.status === 401) {
+      // remember what they wanted, send them to sign up, then continue at /new
+      try { sessionStorage.setItem(PENDING_KEY, JSON.stringify(payload)); } catch {}
+      router.push("/signup?next=/new");
       return;
     }
-    if (!v) return setErr("Paste a website URL or attach a screenshot.");
-    if (!/^(https?:\/\/)?[\w-]+(\.[\w-]+)+/.test(v)) return setErr("That doesn't look like a URL. Try something like stripe.com");
-    setBusy(true);
-    router.push(`/studio?url=${encodeURIComponent(v)}`);
+    if (!r.id) { setErr(r.error || "Something went wrong"); setBusy(false); return; }
+    router.push(`/project/${r.id}`);
   };
 
   return (
@@ -50,7 +66,7 @@ export function PromptBox() {
             <img src={image.url} alt="" className="h-12 w-20 rounded-lg object-cover object-top" />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm text-white">{image.name}</div>
-              <div className="text-xs text-faint">Screenshot · we&apos;ll read it with a vision model</div>
+              <div className="text-xs text-faint">Screenshot · we&apos;ll rebuild it with AI</div>
             </div>
             <button onClick={() => setImage(null)} className="rounded-md p-1 text-faint hover:bg-white/10 hover:text-white" aria-label="Remove image">
               <X className="h-4 w-4" />
@@ -80,7 +96,7 @@ export function PromptBox() {
           <button
             onClick={() => submit()}
             disabled={busy}
-            aria-label="Extract design"
+            aria-label="Clone website"
             className="grid h-9 w-9 place-items-center rounded-full bg-white text-black transition hover:scale-105 disabled:opacity-60"
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}

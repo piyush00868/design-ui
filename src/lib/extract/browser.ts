@@ -2,6 +2,7 @@ import type { Browser } from "puppeteer-core";
 import puppeteer from "puppeteer-core";
 import { COLLECTOR_SCRIPT } from "./collector";
 import type { RawStyles } from "../types";
+import { STRUCTURE_SCRIPT, type PageStructure } from "./structure";
 
 const LOCAL_CHROME_PATHS = [
   process.env.CHROME_PATH,
@@ -50,10 +51,13 @@ export function normalizeUrl(input: string): string {
   return parsed.toString();
 }
 
+export type Capture = { raw: RawStyles; screenshot: string; structure: PageStructure; shots: string[] };
+
 export async function renderAndCollect(
   url: string,
   onStep?: (msg: string) => void,
-): Promise<{ raw: RawStyles; screenshot: string }> {
+  opts: { fullPage?: boolean } = {},
+): Promise<Capture> {
   const browser = await launch();
   try {
     const page = await browser.newPage();
@@ -113,8 +117,23 @@ export async function renderAndCollect(
     }).catch(() => {});
     const tc = Date.now();
     const raw = (await page.evaluate(COLLECTOR_SCRIPT)) as RawStyles;
+    const structure = (await page.evaluate(STRUCTURE_SCRIPT)) as PageStructure;
+
+    // Full-page screenshot slices for the vision model (top of page matters most)
+    const shots: string[] = [];
+    if (opts.fullPage) {
+      onStep?.("Capturing the full page layout");
+      const total = Math.min(structure.pageHeight || 900, 7200);
+      const slice = 1800;
+      for (let y = 0; y < total && shots.length < 4; y += slice) {
+        const h = Math.min(slice, total - y);
+        if (h < 200) break;
+        const buf = (await page.screenshot({ type: "jpeg", quality: 60, clip: { x: 0, y, width: 1440, height: h }, captureBeyondViewport: true })) as Uint8Array;
+        shots.push(`data:image/jpeg;base64,${Buffer.from(buf).toString("base64")}`);
+      }
+    }
     if (process.env.DEBUG_TIMING) console.error("collect ms", Date.now() - tc);
-    return { raw, screenshot };
+    return { raw, screenshot, structure, shots };
   } finally {
     // browser.close() can hang for minutes on some sites; give it a moment, then kill.
     await Promise.race([browser.close().catch(() => {}), new Promise((r) => setTimeout(r, 1500))]);
