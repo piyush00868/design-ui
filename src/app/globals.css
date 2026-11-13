@@ -1,26 +1,60 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@plugin "@tailwindcss/typography";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-ink: #0b0b0f;
+  --color-panel: #131318;
+  --color-panel-2: #1a1a21;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-strong: rgba(255, 255, 255, 0.14);
+  --color-muted: #a1a1aa;
+  --color-faint: #71717a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body { background: var(--color-ink); color: #ededf0; }
+body { font-family: var(--font-sans); }
+::selection { background: rgba(255, 112, 166, 0.35); }
+
+/* Lovable-style glowing aurora behind the hero */
+.aurora {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.aurora::before {
+  content: ""; position: absolute; left: 50%; top: 38%; width: 1400px; height: 1000px; transform: translateX(-50%);
+  background:
+    radial-gradient(closest-side at 30% 55%, rgba(76, 110, 255, 0.55), transparent 70%),
+    radial-gradient(closest-side at 55% 60%, rgba(255, 72, 140, 0.55), transparent 70%),
+    radial-gradient(closest-side at 72% 50%, rgba(255, 140, 50, 0.45), transparent 70%);
+  filter: blur(60px); opacity: 0.85; animation: drift 18s ease-in-out infinite alternate;
+}
+.aurora::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 22px 22px; mask-image: linear-gradient(to bottom, black, transparent 70%);
+}
+@keyframes drift { from { transform: translateX(-52%) scale(1); } to { transform: translateX(-48%) scale(1.08); } }
+
+.text-gradient {
+  background: linear-gradient(90deg, #8ea2ff 0%, #ff6fa8 50%, #ffae5c 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.glass {
+  background: rgba(22, 22, 28, 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--color-line-strong);
 }
+
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px; }
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }
+
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.03) 100%);
+  background-size: 800px 100%; animation: shimmer 1.6s linear infinite;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp 0.35s ease-out both; }

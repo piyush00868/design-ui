@@ -119,6 +119,22 @@ export const COLLECTOR_SCRIPT = String.raw`
     .filter((el) => { const r = el.getBoundingClientRect(); return r.height >= 24 && r.height <= 80 && r.width >= 40 && r.width <= 420; })
     .map(sample).filter((s) => s.text);
 
+  // Many CTAs are plain links styled as buttons: filled or outlined, padded, rounded, button-sized.
+  const seen = new Set(buttons.map((b) => b.text + b.bg));
+  for (const el of visibleEls("a", 300)) {
+    if (buttons.length >= 40) break;
+    const r = el.getBoundingClientRect();
+    if (r.height < 28 || r.height > 72 || r.width < 50 || r.width > 360) continue;
+    const cs = getComputedStyle(el);
+    const filled = cs.backgroundColor !== "rgba(0, 0, 0, 0)";
+    const outlined = px(cs.borderTopWidth) > 0 && cs.borderTopStyle !== "none";
+    if (!(filled || outlined) || px(cs.paddingLeft) < 8) continue;
+    const s = sample(el);
+    if (!s.text || seen.has(s.text + s.bg)) continue;
+    seen.add(s.text + s.bg);
+    buttons.push(s);
+  }
+
   const inputs = visibleEls("input[type=text], input[type=email], input[type=search], input:not([type]), textarea, select", 8).map(sample);
   const links = visibleEls("main a, article a, p a, footer a, a", 30).map(sample).filter((s) => s.text);
 

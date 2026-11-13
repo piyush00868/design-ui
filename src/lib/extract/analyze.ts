@@ -3,7 +3,6 @@ import type { ComponentSample, DesignTokens, RawStyles, TypographyToken } from "
 
 type Cluster = { rgb: RGBA; hex: string; text: number; bg: number; border: number; button: number; link: number };
 
-const total = (c: Cluster) => c.text + c.bg + c.border;
 
 function clusterColors(raw: RawStyles, page: RGBA): Cluster[] {
   const clusters: Cluster[] = [];
@@ -122,12 +121,26 @@ export function analyze(raw: RawStyles): DesignTokens {
   else if (accents[0] && accents[0].score > 60) primary = accents[0].c;
   else if (primaryBtnCluster) primary = primaryBtnCluster; // monochrome brand (e.g. black buttons)
 
+  // TEXT roles first, so monochrome brands can fall back to the main text color
   const textClusters = clusters.filter((c) => c.text > 0).sort((a, b) => b.text - a.text);
-  const onSurface = textClusters.find((c) => c !== primary && chroma(c.rgb) < 25) ?? textClusters[0];
-  if (!primary) primary = onSurface ?? null;
+  const greyText = textClusters.filter((c) => chroma(c.rgb) < 25);
+  // main text = the most used grey that's actually readable on the page background
+  const readable = greyText.filter((c) => contrast(c.rgb, pageRgb) > 3);
+  let mainText = readable[0] ?? greyText[0] ?? textClusters[0];
+  let variant = readable.find((c) => mainText && c !== mainText && deltaE(c.rgb, mainText.rgb) > 8);
+  // the higher-contrast of the two main text greys is the primary text color
+  if (mainText && variant && contrast(variant.rgb, pageRgb) > contrast(mainText.rgb, pageRgb) && variant.text > mainText.text * 0.25) {
+    [mainText, variant] = [variant, mainText];
+  }
+  if (!primary) primary = mainText ?? null;
 
   take(primary);
   if (primary) colors.primary = primary.hex;
+  // the main CTA's exact fill is the most faithful "primary"
+  if (primary && primary === primaryBtnCluster && primaryBtn) {
+    const exact = parseColor(primaryBtn.bg);
+    if (exact) colors.primary = toHex(flatten(exact, pageRgb));
+  }
 
   const rest = accents.filter((a) => !used.has(a.c) && distinct(a.c, 14) && a.score > 20);
   const secondary = rest[0]?.c;
@@ -140,16 +153,14 @@ export function analyze(raw: RawStyles): DesignTokens {
   const surface = clusters
     .filter((c) => c.bg > 0 && chroma(c.rgb) < 20 && c !== neutral && !used.has(c) && deltaE(c.rgb, neutral.rgb) > 2.5)
     .sort((a, b) => b.bg - a.bg)[0];
-  if (surface && surface.bg > 30) { take(surface); colors.surface = surface.hex; }
-
-  let mainText = onSurface;
-  let variant = textClusters.find((c) => !used.has(c) && c !== onSurface && chroma(c.rgb) < 25 && onSurface && deltaE(c.rgb, onSurface.rgb) > 8);
-  // the higher-contrast of the two main text greys is the primary text color
-  if (mainText && variant && contrast(variant.rgb, pageRgb) > contrast(mainText.rgb, pageRgb) && variant.text > mainText.text * 0.25) {
-    [mainText, variant] = [variant, mainText];
+  if (surface && surface.bg > 30) {
+    take(surface);
+    // a strongly contrasting section background is an inverse surface, not a card surface
+    colors[contrast(surface.rgb, neutral.rgb) > 2.2 ? "inverse-surface" : "surface"] = surface.hex;
   }
-  if (mainText) { take(mainText); colors["on-surface"] = mainText.hex; }
-  if (variant) { take(variant); colors["on-surface-variant"] = variant.hex; }
+
+  if (mainText) { used.add(mainText); colors["on-surface"] = mainText.hex; }
+  if (variant && variant !== primary) { take(variant); colors["on-surface-variant"] = variant.hex; }
 
   // borders are usually subtle: prefer low-contrast greys over currentColor-black borders
   const borderCands = clusters.filter((c) => c.border > 0 && chroma(c.rgb) < 25 && !used.has(c));
@@ -240,7 +251,7 @@ export function analyze(raw: RawStyles): DesignTokens {
   const sp = raw.spacing.filter((s) => s.value >= 2);
   const totalW = sp.reduce((a, s) => a + s.weight, 0) || 1;
   const fit = (u: number) => sp.filter((s) => s.value % u === 0).reduce((a, s) => a + s.weight, 0) / totalW;
-  const baseUnit = fit(8) > 0.62 ? 8 : fit(4) > 0.6 ? 4 : fit(2) > 0.8 ? 2 : 4;
+  const baseUnit = fit(8) > 0.62 ? 8 : 4;
   const candidates = [...new Set(sp.filter((s) => s.weight >= 2).slice(0, 18).map((s) => s.value))]
     .map((v) => (v % baseUnit === 0 ? v : round(v, baseUnit)))
     .filter((v) => v > 0);
@@ -303,7 +314,7 @@ export function analyze(raw: RawStyles): DesignTokens {
     out.rounded = radiusRef(s.radius);
     if (s.paddingY || s.paddingX) out.padding = `${s.paddingY}px ${s.paddingX}px`;
     if (s.height) out.height = `${s.height}px`;
-    if (s.borderWidth > 0) out.border = `${s.borderWidth}px solid ${colorRef(s.borderColor)}`;
+    if (s.borderWidth > 0 && !isTransparent(s.borderColor)) out.border = `${s.borderWidth}px solid ${colorRef(s.borderColor)}`;
     return { ...out, ...extra };
   };
 
