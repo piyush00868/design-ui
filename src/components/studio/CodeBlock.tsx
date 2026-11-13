@@ -23,7 +23,7 @@ export function CopyButton({ text, label = "Copy", className = "" }: { text: str
 
 export function CodeBlock({ code, filename, lang }: { code: string; filename: string; lang?: string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-[#0d0d12]">
+    <div className="overflow-hidden rounded-2xl border border-line bg-[#0d0d12] code-surface">
       <div className="flex items-center justify-between border-b border-line px-4 py-2">
         <span className="font-mono text-xs text-muted">{filename}{lang ? <span className="ml-2 text-faint">{lang}</span> : null}</span>
         <div className="flex gap-2">

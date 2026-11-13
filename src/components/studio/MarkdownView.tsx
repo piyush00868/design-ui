@@ -25,7 +25,7 @@ export function MarkdownView({ md }: { md: string }) {
               <pre className="scroll-thin max-h-80 overflow-auto px-4 pb-4 font-mono text-[12px] text-zinc-300">{fm[1]}</pre>
             </details>
           )}
-          <article className="prose prose-invert max-w-none prose-headings:tracking-tight prose-h1:text-3xl prose-h2:mt-10 prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-2 prose-code:rounded prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.82em] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-table:text-sm prose-pre:bg-black/40">
+          <article className="prose dark:prose-invert max-w-none prose-headings:tracking-tight prose-h1:text-3xl prose-h2:mt-10 prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-2 prose-code:rounded prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.82em] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-table:text-sm prose-pre:bg-black/40">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{

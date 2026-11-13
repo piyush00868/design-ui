@@ -11,6 +11,7 @@ import { ExportPanel } from "../studio/ExportPanel";
 import { MarkdownView } from "../studio/MarkdownView";
 import { StyleGuide } from "../studio/StyleGuide";
 import { UserMenu } from "../UserMenu";
+import { ThemeToggle } from "../ThemeToggle";
 import { withEditorScript } from "./previewScript";
 import type { DesignTokens } from "@/lib/types";
 
@@ -260,6 +261,7 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
               </div>
             )}
           </div>
+          <ThemeToggle />
           <UserMenu user={user} />
         </div>
       </header>
@@ -336,7 +338,7 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
               />
               <div className="flex items-center justify-between">
                 <button onClick={() => { setSelectMode((s) => !s); setTab("preview"); }} disabled={!html}
-                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition disabled:opacity-40 ${selectMode ? "bg-[#6d82ff] text-white" : "border border-line-strong text-muted hover:text-white"}`}>
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition disabled:opacity-40 ${selectMode ? "bg-[#6d82ff] text-[#fff]" : "border border-line-strong text-muted hover:text-white"}`}>
                   <MousePointerClick className="h-3.5 w-3.5" /> {selectMode ? "Click a section…" : "Select section"}
                 </button>
                 <button onClick={() => send()} disabled={!input.trim() || editing || !html} className="grid h-8 w-8 place-items-center rounded-full bg-white text-black disabled:opacity-40" aria-label="Send">
@@ -405,13 +407,13 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
             </div>
           </div>
 
-          <div className="relative min-h-0 flex-1 bg-[#0d0d12]">
+          <div className="relative min-h-0 flex-1 bg-[#0d0d12] code-surface">
             {tab === "preview" && (
               previewSrc ? (
                 <div className="relative flex h-full justify-center overflow-auto p-3">
                   {frameLoading && !building && !editing && <div className="absolute inset-3 z-10 grid place-items-center rounded-lg bg-panel"><Loader2 className="h-5 w-5 animate-spin text-pink-300" /></div>}
                   <iframe ref={iframe} title="Preview" srcDoc={previewSrc} onLoad={() => { syncIframe(); setTimeout(() => setFrameLoading(false), 350); }} sandbox="allow-scripts"
-                    className={`h-full rounded-lg border border-line bg-white shadow-2xl transition-[width] duration-300 ${selectMode ? "ring-2 ring-[#6d82ff]" : ""}`} style={{ width: deviceW }} />
+                    className={`h-full rounded-lg border border-line bg-[#fff] shadow-2xl transition-[width] duration-300 ${selectMode ? "ring-2 ring-[#6d82ff]" : ""}`} style={{ width: deviceW }} />
                 </div>
               ) : <BuildingState job={job} thumbnail={project?.thumbnail} />
             )}
@@ -459,7 +461,7 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
 }
 
 function Avatar() {
-  return <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#6d82ff] via-[#ff5c9d] to-[#ff9d4d]"><Sparkles className="h-3.5 w-3.5 text-white" /></span>;
+  return <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#6d82ff] via-[#ff5c9d] to-[#ff9d4d]"><Sparkles className="h-3.5 w-3.5 text-[#fff]" /></span>;
 }
 
 function MenuItem({ icon: Icon, label, sub, onClick }: { icon: typeof Copy; label: string; sub?: string; onClick: () => void }) {

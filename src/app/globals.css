@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -13,7 +14,31 @@
   --color-faint: #71717a;
 }
 
-html, body { background: var(--color-ink); color: #ededf0; }
+html, body { background: var(--color-ink); color: var(--color-white); }
+
+/* Light theme: swap the palette. Tailwind utilities read these variables, so
+   text-white / bg-white/5 / text-black flip automatically. */
+html.light {
+  color-scheme: light;
+  --color-white: #0b0b10;
+  --color-black: #ffffff;
+  --color-ink: #f7f7f9;
+  --color-panel: #ffffff;
+  --color-panel-2: #f0f0f3;
+  --color-line: rgba(10, 10, 20, 0.08);
+  --color-line-strong: rgba(10, 10, 20, 0.14);
+  --color-muted: #52525b;
+  --color-faint: #8a8a94;
+  --color-zinc-300: #3f3f46;
+  --color-zinc-200: #e4e4e7;
+}
+html.dark { color-scheme: dark; }
+html.light .glass { background: rgba(255, 255, 255, 0.78); }
+html.light .aurora::before { opacity: 0.45; }
+html.light .aurora::after { background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px); }
+html.light .shimmer { background-image: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.07) 50%, rgba(0,0,0,0.03) 100%); }
+html.light .code-surface { background: #f4f4f6 !important; }
+html, body, .glass { transition: background-color .2s ease, color .2s ease; }
 body { font-family: var(--font-sans); }
 ::selection { background: rgba(255, 112, 166, 0.35); }
 
@@ -48,7 +73,7 @@ body { font-family: var(--font-sans); }
 }
 
 .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
-.scroll-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--color-white) 14%, transparent); border-radius: 8px; }
 .scroll-thin::-webkit-scrollbar-track { background: transparent; }
 
 @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
