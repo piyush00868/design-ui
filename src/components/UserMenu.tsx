@@ -14,7 +14,7 @@ export function UserMenu({ user }: { user: { name: string | null; email: string;
   const initial = (user.name || user.email).charAt(0).toUpperCase();
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[#6d82ff] to-[#ff5c9d] text-sm font-medium text-[#fff] ring-2 ring-white/10" aria-label="Account menu">
+      <button onClick={() => setOpen((o) => !o)} className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-accent text-sm font-medium text-[#fff] ring-2 ring-white/10" aria-label="Account menu">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {user.avatar_url ? <img src={user.avatar_url} alt="" className="h-full w-full object-cover" /> : initial}
       </button>

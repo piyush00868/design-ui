@@ -23,7 +23,7 @@ export default function NewPage() {
   }, [router]);
   return (
     <main className="grid min-h-screen place-items-center text-sm text-muted">
-      {err ? <p className="text-pink-300">{err}</p> : <p className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Starting your clone…</p>}
+      {err ? <p className="text-accent">{err}</p> : <p className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Starting your clone…</p>}
     </main>
   );
 }

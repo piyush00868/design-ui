@@ -32,19 +32,19 @@ export function AuthForm({ mode, providers }: { mode: "login" | "signup"; provid
   };
 
   const anyOAuth = providers.github || providers.google;
-  const input = "w-full rounded-xl border border-line-strong bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-faint focus:border-pink-400/60 focus:outline-none focus:ring-2 focus:ring-pink-400/20";
+  const input = "h-12 w-full border border-line-strong bg-transparent px-3.5 text-[15px] text-white placeholder:text-faint focus:border-white/30 focus:outline-none";
   return (
-    <div className="glass w-full max-w-sm rounded-3xl p-7 shadow-[0_30px_100px_-30px_rgba(0,0,0,0.9)]">
-      <h1 className="text-2xl font-semibold tracking-tight text-white">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
+    <div className="w-full max-w-[380px]">
+      <h1 className="display text-[36px] text-white">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
       <p className="mt-1.5 text-sm text-muted">{mode === "login" ? "Log in to see your projects." : "Free for students and developers."}</p>
 
       {anyOAuth && (
         <div className="mt-6 space-y-2">
           {providers.google && (
-            <a href={`/api/auth/oauth/google?next=${encodeURIComponent(next)}`} className="flex w-full items-center justify-center gap-2 rounded-xl border border-line-strong bg-white/5 py-2.5 text-sm text-white hover:bg-white/10"><GoogleIcon /> Continue with Google</a>
+            <a href={`/api/auth/oauth/google?next=${encodeURIComponent(next)}`} className="flex w-full items-center justify-center gap-2 btn btn-ghost w-full"><GoogleIcon /> Continue with Google</a>
           )}
           {providers.github && (
-            <a href={`/api/auth/oauth/github?next=${encodeURIComponent(next)}`} className="flex w-full items-center justify-center gap-2 rounded-xl border border-line-strong bg-white/5 py-2.5 text-sm text-white hover:bg-white/10"><GithubIcon /> Continue with GitHub</a>
+            <a href={`/api/auth/oauth/github?next=${encodeURIComponent(next)}`} className="flex w-full items-center justify-center gap-2 btn btn-ghost w-full"><GithubIcon /> Continue with GitHub</a>
           )}
           <div className="flex items-center gap-3 py-2 text-xs text-faint"><span className="h-px flex-1 bg-line-strong" />or<span className="h-px flex-1 bg-line-strong" /></div>
         </div>
@@ -54,8 +54,8 @@ export function AuthForm({ mode, providers }: { mode: "login" | "signup"; provid
         {mode === "signup" && <input name="name" required placeholder="Your name" autoComplete="name" className={input} />}
         <input name="email" type="email" required placeholder="you@example.com" autoComplete="email" className={input} />
         <input name="password" type="password" required minLength={mode === "signup" ? 8 : 1} placeholder={mode === "signup" ? "Password (8+ characters)" : "Password"} autoComplete={mode === "signup" ? "new-password" : "current-password"} className={input} />
-        {err && <p className="text-sm text-pink-300">{err}</p>}
-        <button disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-2.5 text-sm font-medium text-black hover:bg-zinc-200 disabled:opacity-60">
+        {err && <p className="text-sm text-accent">{err}</p>}
+        <button disabled={busy} className="btn btn-accent w-full disabled:opacity-60">
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}{mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>

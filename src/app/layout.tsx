@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { themeInitScript } from "@/components/ThemeToggle";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const grotesk = Inter_Tight({ variable: "--font-grotesk", subsets: ["latin"], weight: ["400", "500", "600"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DesignDNA · Turn any website into a DESIGN.md",
+  title: "DesignDNA · Clone any website with AI",
   description:
     "Paste a URL or drop a screenshot. Get the colors, typography, spacing and components as a DESIGN.md, Tailwind config, CSS variables and recreated code.",
   openGraph: {
-    title: "DesignDNA · Turn any website into a DESIGN.md",
+    title: "DesignDNA · Clone any website with AI",
     description: "Extract any website's design system in seconds. Free for students and developers.",
   },
 };
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: themeInitScript }} /></head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${grotesk.variable} ${geistMono.variable} antialiased`}>{children}</body>
     </html>
   );
 }

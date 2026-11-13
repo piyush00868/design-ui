@@ -168,7 +168,7 @@ export function StyleGuide({ tokens: t, screenshot }: { tokens: DesignTokens; sc
             {Object.entries(t.spacing).filter(([k]) => k !== "container").map(([k, v]) => (
               <div key={k} className="flex items-center gap-3 text-xs">
                 <span className="w-10 font-mono text-faint">{k}</span>
-                <span className="h-3 rounded-sm bg-gradient-to-r from-[#6d82ff] to-[#ff5c9d]" style={{ width: `min(${v}, 100%)` }} />
+                <span className="h-3 rounded-sm bg-accent" style={{ width: `min(${v}, 100%)` }} />
                 <span className="font-mono text-muted">{v}</span>
               </div>
             ))}

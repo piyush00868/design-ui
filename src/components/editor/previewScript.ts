@@ -3,7 +3,7 @@
 const SCRIPT = `<script data-dd-editor>(function(){
 var on=false;
 var st=document.createElement('style');
-st.textContent='[data-dd-hover]{outline:2px dashed #ff5c9d!important;outline-offset:-3px;cursor:pointer!important}[data-dd-selected]{outline:3px solid #6d82ff!important;outline-offset:-3px}[data-dd-label]{position:absolute;z-index:2147483647;background:#ff5c9d;color:#fff;font:600 11px/1 system-ui;padding:4px 6px;border-radius:4px;pointer-events:none}';
+st.textContent='[data-dd-hover]{outline:2px dashed #fb460d!important;outline-offset:-3px;cursor:pointer!important}[data-dd-selected]{outline:3px solid #fb460d!important;outline-offset:-3px}[data-dd-label]{position:absolute;z-index:2147483647;background:#fb460d;color:#fff;font:600 11px/1 system-ui;padding:4px 6px;border-radius:4px;pointer-events:none}';
 document.head&&document.head.appendChild(st);
 var label=document.createElement('div');label.setAttribute('data-dd-label','');label.style.display='none';
 function clear(attr){document.querySelectorAll('['+attr+']').forEach(function(x){x.removeAttribute(attr)})}

@@ -2,84 +2,110 @@
 @plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+  DesignDNA design language (inspired by annnimate.com):
+  near-black canvas, soft off-white type, a single hot-orange accent,
+  square corners, hairline 1px grids, tight grotesk headlines.
+*/
 @theme inline {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --color-ink: #0b0b0f;
-  --color-panel: #131318;
-  --color-panel-2: #1a1a21;
-  --color-line: rgba(255, 255, 255, 0.08);
-  --color-line-strong: rgba(255, 255, 255, 0.14);
-  --color-muted: #a1a1aa;
-  --color-faint: #71717a;
+  --color-accent: #fb460d;
+  --color-accent-hover: #ff5a24;
+  --color-ink: #141314;
+  --color-panel: #1b1a1b;
+  --color-panel-2: #232223;
+  --color-line: rgba(238, 238, 238, 0.09);
+  --color-line-strong: rgba(238, 238, 238, 0.16);
+  --color-white: #eeeeee;
+  --color-black: #141314;
+  --color-muted: #8c8b8c;
+  --color-faint: #636263;
+  --color-soft: #cfcecf;
+  /* square everything (pills via rounded-full still work) */
+  --radius-xs: 0px; --radius-sm: 0px; --radius-md: 0px; --radius-lg: 0px;
+  --radius-xl: 0px; --radius-2xl: 0px; --radius-3xl: 0px; --radius: 0px;
 }
 
 html, body { background: var(--color-ink); color: var(--color-white); }
+body { font-family: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif; font-feature-settings: "ss01", "cv11"; -webkit-font-smoothing: antialiased; }
+::selection { background: rgba(251, 70, 13, 0.4); color: #fff; }
 
-/* Light theme: swap the palette. Tailwind utilities read these variables, so
-   text-white / bg-white/5 / text-black flip automatically. */
 html.light {
   color-scheme: light;
-  --color-white: #0b0b10;
-  --color-black: #ffffff;
-  --color-ink: #f7f7f9;
-  --color-panel: #ffffff;
-  --color-panel-2: #f0f0f3;
-  --color-line: rgba(10, 10, 20, 0.08);
-  --color-line-strong: rgba(10, 10, 20, 0.14);
-  --color-muted: #52525b;
-  --color-faint: #8a8a94;
-  --color-zinc-300: #3f3f46;
-  --color-zinc-200: #e4e4e7;
+  --color-ink: #eeeeee;
+  --color-panel: #f7f7f7;
+  --color-panel-2: #e6e6e6;
+  --color-line: rgba(20, 19, 20, 0.1);
+  --color-line-strong: rgba(20, 19, 20, 0.18);
+  --color-white: #141314;
+  --color-black: #eeeeee;
+  --color-muted: #696869;
+  --color-faint: #8c8b8c;
+  --color-soft: #3a393a;
+  --color-zinc-300: #3a393a;
 }
 html.dark { color-scheme: dark; }
-html.light .glass { background: rgba(255, 255, 255, 0.78); }
-html.light .aurora::before { opacity: 0.45; }
-html.light .aurora::after { background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px); }
-html.light .shimmer { background-image: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.07) 50%, rgba(0,0,0,0.03) 100%); }
-html.light .code-surface { background: #f4f4f6 !important; }
-html, body, .glass { transition: background-color .2s ease, color .2s ease; }
-body { font-family: var(--font-sans); }
-::selection { background: rgba(255, 112, 166, 0.35); }
+html.light .code-surface { background: #f4f4f4 !important; }
 
-/* Lovable-style glowing aurora behind the hero */
-.aurora {
-  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-}
-.aurora::before {
-  content: ""; position: absolute; left: 50%; top: 38%; width: 1400px; height: 1000px; transform: translateX(-50%);
+/* Headline type: tight grotesk */
+.display { font-weight: 500; letter-spacing: -0.035em; line-height: 1; }
+.h2 { font-weight: 500; letter-spacing: -0.035em; line-height: 1.08; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; height: 2.75rem; padding: 0 1.1rem; font-size: 15px; font-weight: 500; letter-spacing: -0.01em; transition: background-color .15s, color .15s, transform .15s; white-space: nowrap; }
+.btn-sm { height: 2.4rem; padding: 0 .9rem; font-size: 14px; }
+.btn-accent { background: var(--color-accent); color: #141314; }
+.btn-accent:hover { background: var(--color-accent-hover); }
+.btn-ghost { background: color-mix(in srgb, var(--color-white) 9%, transparent); color: var(--color-white); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-white) 15%, transparent); }
+.btn:active { transform: translateY(1px); }
+
+/* Hairline feature grid */
+.hairline-grid { border: 1px solid var(--color-line-strong); }
+.hairline-grid > * { border-color: var(--color-line-strong); }
+
+/* Hero: curved wall of site cards */
+.wall { perspective: 1400px; perspective-origin: 50% 0%; }
+.wall-track { transform-style: preserve-3d; }
+.wall-card { backface-visibility: hidden; }
+.wall-fade { background: linear-gradient(#141314 0%, rgba(20,19,20,.55) 30%, rgba(20,19,20,.25) 60%, #141314 100%); }
+html.light .wall-fade { background: linear-gradient(#eeeeee 0%, rgba(238,238,238,.6) 30%, rgba(238,238,238,.3) 60%, #eeeeee 100%); }
+@keyframes wallDrift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.wall-row { animation: wallDrift 90s linear infinite; }
+.wall-row.reverse { animation-direction: reverse; animation-duration: 110s; }
+@media (prefers-reduced-motion: reduce) { .wall-row { animation: none; } }
+
+/* Orb */
+.orb {
   background:
-    radial-gradient(closest-side at 30% 55%, rgba(76, 110, 255, 0.55), transparent 70%),
-    radial-gradient(closest-side at 55% 60%, rgba(255, 72, 140, 0.55), transparent 70%),
-    radial-gradient(closest-side at 72% 50%, rgba(255, 140, 50, 0.45), transparent 70%);
-  filter: blur(60px); opacity: 0.85; animation: drift 18s ease-in-out infinite alternate;
+    radial-gradient(circle at 38% 30%, rgba(255,240,225,.95) 0%, rgba(255,190,150,.8) 12%, transparent 34%),
+    radial-gradient(circle at 60% 72%, rgba(60,10,0,.85) 0%, transparent 42%),
+    radial-gradient(circle at 25% 65%, rgba(255,120,60,.9) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, #fb460d 0%, #c2330a 55%, #4a1203 100%);
+  filter: saturate(1.1);
+  box-shadow: 0 0 120px rgba(251,70,13,.35), inset -30px -40px 80px rgba(0,0,0,.45);
+  animation: orbSpin 24s linear infinite;
 }
-.aurora::after {
-  content: ""; position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 22px 22px; mask-image: linear-gradient(to bottom, black, transparent 70%);
-}
-@keyframes drift { from { transform: translateX(-52%) scale(1); } to { transform: translateX(-48%) scale(1.08); } }
-
-.text-gradient {
-  background: linear-gradient(90deg, #8ea2ff 0%, #ff6fa8 50%, #ffae5c 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-
-.glass {
-  background: rgba(22, 22, 28, 0.72);
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid var(--color-line-strong);
-}
+@keyframes orbSpin { from { background-position: 0 0; filter: hue-rotate(0deg) saturate(1.1); } 50% { filter: hue-rotate(-8deg) saturate(1.25); } to { filter: hue-rotate(0deg) saturate(1.1); } }
 
 .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
-.scroll-thin::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--color-white) 14%, transparent); border-radius: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--color-white) 14%, transparent); }
 .scroll-thin::-webkit-scrollbar-track { background: transparent; }
 
 @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
 .shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.03) 100%);
+  background: linear-gradient(90deg, rgba(238,238,238,0.03) 0%, rgba(238,238,238,0.08) 50%, rgba(238,238,238,0.03) 100%);
   background-size: 800px 100%; animation: shimmer 1.6s linear infinite;
 }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .fade-up { animation: fadeUp 0.35s ease-out both; }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* legacy helpers still used in app screens */
+.glass { background: var(--color-panel); border: 1px solid var(--color-line-strong); }
+.aurora { display: none; }
+.text-gradient { color: var(--color-accent); }

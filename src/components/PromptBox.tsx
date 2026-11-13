@@ -12,7 +12,7 @@ export async function createProject(payload: { url?: string; image?: string; pal
   return { status: res.status, id: j.id as string | undefined, error: j.error as string | undefined };
 }
 
-const EXAMPLES = ["stripe.com", "linear.app", "vercel.com", "notion.com", "airbnb.com", "apple.com"];
+const EXAMPLES = ["stripe.com", "linear.app", "vercel.com", "notion.com", "framer.com"];
 
 export function PromptBox() {
   const router = useRouter();
@@ -53,63 +53,49 @@ export function PromptBox() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <div className="mx-auto w-full max-w-[640px]">
       <div
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); onFile(e.dataTransfer.files?.[0]); }}
-        className={`glass relative rounded-3xl p-3 shadow-[0_20px_80px_-20px_rgba(0,0,0,0.8)] transition ${drag ? "ring-2 ring-pink-400/70" : ""}`}
+        className={`relative border bg-[#1b1a1b]/90 backdrop-blur-md transition-colors [html.light_&]:bg-white/90 ${drag ? "border-accent" : "border-line-strong focus-within:border-white/30"}`}
       >
         {image && (
-          <div className="mb-2 flex items-center gap-3 rounded-2xl border border-line bg-white/5 p-2 pr-3 fade-up">
+          <div className="flex items-center gap-3 border-b border-line-strong p-2 pr-3 fade-up">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={image.url} alt="" className="h-12 w-20 rounded-lg object-cover object-top" />
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-sm text-white">{image.name}</div>
-              <div className="text-xs text-faint">Screenshot · we&apos;ll rebuild it with AI</div>
+            <img src={image.url} alt="" className="h-11 w-[72px] object-cover object-top" />
+            <div className="min-w-0 flex-1 text-left">
+              <div className="truncate text-[14px] text-white">{image.name}</div>
+              <div className="text-[12px] text-muted">Screenshot · rebuilt with AI</div>
             </div>
-            <button onClick={() => setImage(null)} className="rounded-md p-1 text-faint hover:bg-white/10 hover:text-white" aria-label="Remove image">
-              <X className="h-4 w-4" />
-            </button>
+            <button onClick={() => setImage(null)} className="p-1 text-muted hover:text-white" aria-label="Remove image"><X className="h-4 w-4" /></button>
           </div>
         )}
-        <textarea
-          value={value}
-          onChange={(e) => { setValue(e.target.value); setErr(""); }}
-          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); } }}
-          onPaste={(e) => { const f = Array.from(e.clipboardData.files)[0]; if (f) { e.preventDefault(); onFile(f); } }}
-          rows={2}
-          placeholder={image ? "Add a note (optional) and hit enter" : "Paste a website URL, e.g. stripe.com, or drop a screenshot"}
-          className="w-full resize-none bg-transparent px-3 pt-2 text-[16px] text-white placeholder:text-faint focus:outline-none"
-          autoFocus
-        />
-        <div className="flex items-center justify-between px-1 pt-1">
-          <div className="flex items-center gap-1.5">
-            <button onClick={() => fileRef.current?.click()} className="flex items-center gap-1.5 rounded-full border border-line-strong px-3 py-1.5 text-xs text-muted hover:bg-white/10 hover:text-white">
-              <ImagePlus className="h-3.5 w-3.5" /> Screenshot
-            </button>
-            <span className="hidden items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs text-faint sm:flex">
-              <Globe className="h-3.5 w-3.5" /> Live URL
-            </span>
-            <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-          </div>
-          <button
-            onClick={() => submit()}
-            disabled={busy}
-            aria-label="Clone website"
-            className="grid h-9 w-9 place-items-center rounded-full bg-white text-black transition hover:scale-105 disabled:opacity-60"
-          >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
+        <div className="flex items-center gap-2 p-2">
+          <Globe className="ml-2 h-4 w-4 shrink-0 text-muted" strokeWidth={1.75} />
+          <input
+            value={value}
+            onChange={(e) => { setValue(e.target.value); setErr(""); }}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); submit(); } }}
+            onPaste={(e) => { const f = Array.from(e.clipboardData.files)[0]; if (f) { e.preventDefault(); onFile(f); } }}
+            placeholder={image ? "Press clone to rebuild your screenshot" : "Paste any website, e.g. stripe.com"}
+            className="h-11 min-w-0 flex-1 bg-transparent text-[16px] text-white placeholder:text-faint focus:outline-none"
+            aria-label="Website URL"
+          />
+          <button onClick={() => fileRef.current?.click()} title="Upload a screenshot" className="grid h-11 w-11 shrink-0 place-items-center text-muted transition-colors hover:bg-white/10 hover:text-white" aria-label="Upload screenshot">
+            <ImagePlus className="h-[18px] w-[18px]" strokeWidth={1.75} />
+          </button>
+          <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
+          <button onClick={() => submit()} disabled={busy} className="btn btn-accent shrink-0 disabled:opacity-70">
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Clone <ArrowUp className="h-4 w-4 rotate-45" /></>}
           </button>
         </div>
       </div>
-      {err && <p className="mt-3 text-center text-sm text-pink-300">{err}</p>}
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-        <span className="text-xs text-faint">Try:</span>
+      {err && <p className="mt-3 text-[14px] text-accent">{err}</p>}
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[14px]">
+        <span className="text-muted">Try</span>
         {EXAMPLES.map((ex) => (
-          <button key={ex} onClick={() => { setValue(ex); submit(ex); }} className="rounded-full border border-line bg-white/[0.03] px-3 py-1 text-xs text-muted transition hover:border-line-strong hover:bg-white/10 hover:text-white">
-            {ex}
-          </button>
+          <button key={ex} onClick={() => { setValue(ex); submit(ex); }} className="text-soft underline decoration-white/20 underline-offset-4 transition-colors hover:text-white hover:decoration-accent">{ex}</button>
         ))}
       </div>
     </div>

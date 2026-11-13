@@ -16,7 +16,7 @@ function ago(d: string) {
 export function ProjectGrid({ initial }: { initial: P[] }) {
   const [items, setItems] = useState(initial);
   if (!items.length) {
-    return <div className="rounded-2xl border border-dashed border-line-strong p-12 text-center text-sm text-faint">No projects yet. Paste a URL above to clone your first website.</div>;
+    return <div className="border border-dashed border-line-strong p-16 text-center text-sm text-faint">No projects yet. Paste a URL above to clone your first website.</div>;
   }
   const remove = async (id: string) => {
     if (!confirm("Delete this project and all its versions?")) return;
@@ -26,24 +26,24 @@ export function ProjectGrid({ initial }: { initial: P[] }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((p) => (
-        <div key={p.id} className="group relative overflow-hidden rounded-2xl border border-line bg-panel transition hover:-translate-y-0.5 hover:border-line-strong">
+        <div key={p.id} className="group relative bg-panel p-3 pb-0 transition-colors hover:bg-panel-2">
           <Link href={`/project/${p.id}`}>
             <div className="relative aspect-[16/10] overflow-hidden bg-panel-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {p.thumbnail ? <img src={p.thumbnail} alt="" className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.03]" /> : <div className="shimmer h-full w-full" />}
               {p.status !== "ready" && (
-                <span className={`absolute left-3 top-3 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs backdrop-blur ${p.status === "error" ? "bg-pink-500/20 text-pink-200" : "bg-black/60 text-white"}`}>
+                <span className={`absolute left-3 top-3 flex items-center gap-1.5 px-2.5 py-1 text-xs backdrop-blur ${p.status === "error" ? "bg-accent text-[#141314]" : "bg-black/60 text-white"}`}>
                   {p.status === "error" ? <AlertCircle className="h-3 w-3" /> : <Loader2 className="h-3 w-3 animate-spin" />}{p.status === "error" ? "Failed" : "Cloning"}
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-3 p-4">
+            <div className="flex items-center gap-3 py-3">
               <span className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-lg bg-white/5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 {p.favicon ? <img src={p.favicon} alt="" className="h-4 w-4" /> : <Globe className="h-4 w-4 text-faint" />}
               </span>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-white">{p.name}</div>
+                <div className="truncate text-[15px] text-white">{p.name}</div>
                 <div className="flex items-center gap-2 text-xs text-faint">
                   <span>{ago(p.updated_at)}</span>
                   <span className="flex items-center gap-1"><FileStack className="h-3 w-3" />{p.page_count} page{p.page_count === 1 ? "" : "s"}</span>

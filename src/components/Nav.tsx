@@ -1,41 +1,50 @@
 import Link from "next/link";
 import { currentUser } from "@/lib/server/auth";
-import { Logo } from "./Logo";
-import { UserMenu } from "./UserMenu";
 import { GithubIcon } from "./icons";
+import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
-export { GithubIcon };
+import { UserMenu } from "./UserMenu";
 
+export { GithubIcon };
 export const REPO_URL = "https://github.com/piyush00868/design-ui";
+
+const LINKS = [
+  { href: "/#try", label: "Playground" },
+  { href: "/#features", label: "Features", badge: "New" },
+  { href: "/#agents", label: "DESIGN.md" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: REPO_URL, label: "GitHub", external: true },
+];
 
 export async function Nav({ marketing = true }: { marketing?: boolean }) {
   const user = await currentUser();
   return (
-    <header className="relative z-20 mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-      <Logo />
+    <header className="relative z-30 flex h-[72px] items-center justify-between px-5 sm:px-8">
+      <Logo byline />
       {marketing && (
-        <nav className="hidden items-center gap-7 text-sm text-muted md:flex">
-          <Link href="/#how" className="hover:text-white">How it works</Link>
-          <Link href="/#output" className="hover:text-white">What you get</Link>
-          <Link href="/#faq" className="hover:text-white">FAQ</Link>
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 text-[16px] text-muted lg:flex">
+          {LINKS.map((l) => (
+            <Link key={l.label} href={l.href} target={l.external ? "_blank" : undefined} className="relative transition-colors hover:text-white">
+              {l.badge && <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-accent">{l.badge}</span>}
+              {l.label}
+            </Link>
+          ))}
         </nav>
       )}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <ThemeToggle />
-        <Link href={REPO_URL} target="_blank" className="hidden items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-muted hover:text-white sm:flex">
-          <GithubIcon /> GitHub
-        </Link>
         {user ? (
           <>
-            {marketing && <Link href="/dashboard" className="rounded-lg border border-line-strong bg-white/5 px-3 py-1.5 text-sm text-white hover:bg-white/10">Dashboard</Link>}
+            {marketing && <Link href="/dashboard" className="btn btn-sm btn-accent">Dashboard</Link>}
             <UserMenu user={user} />
           </>
         ) : (
           <>
-            <Link href="/login" className="rounded-lg px-3 py-1.5 text-sm text-muted hover:text-white">Log in</Link>
-            <Link href="/signup" className="rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-black hover:bg-zinc-200">Get started</Link>
+            <Link href="/login" className="hidden px-2 text-[16px] text-muted transition-colors hover:text-white sm:block">Login</Link>
+            <Link href="/signup" className="btn btn-sm btn-accent">Start cloning</Link>
           </>
         )}
+        {!marketing && <Link href={REPO_URL} target="_blank" className="hidden text-muted hover:text-white sm:block" aria-label="GitHub"><GithubIcon /></Link>}
       </div>
     </header>
   );

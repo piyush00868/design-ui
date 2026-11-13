@@ -1,11 +1,11 @@
 "use client";
 import {
   ArrowUp, Check, ChevronDown, Code2, Copy, Download, ExternalLink, FileCode2, FileText, Globe, History, Loader2,
-  Monitor, MousePointerClick, Palette, Plus, Share2, Smartphone, Sparkles, Tablet, X,
+  Monitor, MousePointerClick, Palette, Plus, Share2, Smartphone, Tablet, X,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Logo } from "../Logo";
+import { Logo, Mark } from "../Logo";
 import { download } from "../studio/CodeBlock";
 import { ExportPanel } from "../studio/ExportPanel";
 import { MarkdownView } from "../studio/MarkdownView";
@@ -246,7 +246,7 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
 
         <div className="flex items-center gap-2">
           <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <button disabled={!html} onClick={() => setMenu(menu === "export" ? null : "export")} className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-black hover:bg-zinc-200 disabled:opacity-50">
+            <button disabled={!html} onClick={() => setMenu(menu === "export" ? null : "export")} className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-[#141314] hover:bg-accent-hover disabled:opacity-50">
               <Download className="h-4 w-4" /> Export <ChevronDown className="h-3.5 w-3.5" />
             </button>
             {menu === "export" && (
@@ -275,14 +275,14 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
                 {m.role === "user" ? (
                   <div className="ml-8 rounded-2xl rounded-tr-md bg-white/[0.07] px-4 py-2.5 text-sm text-white">
                     {m.content.startsWith("[") ? (
-                      <><span className="mb-1 inline-flex items-center gap-1 rounded-md bg-[#6d82ff]/20 px-1.5 py-0.5 text-[11px] text-[#aab6ff]"><MousePointerClick className="h-3 w-3" />{m.content.slice(1, m.content.indexOf("]"))}</span><br />{m.content.slice(m.content.indexOf("]") + 2)}</>
+                      <><span className="mb-1 inline-flex items-center gap-1 rounded-md bg-[#fb460d]/20 px-1.5 py-0.5 text-[11px] text-[#ff8a5c]"><MousePointerClick className="h-3 w-3" />{m.content.slice(1, m.content.indexOf("]"))}</span><br />{m.content.slice(m.content.indexOf("]") + 2)}</>
                     ) : m.content}
                   </div>
                 ) : (
                   <div className="flex gap-3">
                     <Avatar />
                     <div className="min-w-0 flex-1 pt-0.5 text-sm leading-relaxed text-zinc-300">
-                      {m.pending ? <span className="flex items-center gap-2 text-muted"><Loader2 className="h-3.5 w-3.5 animate-spin text-pink-300" /> Editing{m.content ? ` · ${m.content} chars` : "…"}</span> : m.content}
+                      {m.pending ? <span className="flex items-center gap-2 text-muted"><Loader2 className="h-3.5 w-3.5 animate-spin text-accent" /> Editing{m.content ? ` · ${m.content} chars` : "…"}</span> : m.content}
                     </div>
                   </div>
                 )}
@@ -298,18 +298,18 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
                       const active = i === job.steps.length - 1 && job.status === "running";
                       return (
                         <li key={i} className="flex items-center gap-2 text-sm">
-                          {active ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-pink-300" /> : <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
+                          {active ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-accent" /> : <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
                           <span className={active ? "text-white" : "text-muted"}>{s}{active && s.startsWith("Rebuilding") && job.html ? ` · ${Math.round(job.html.length / 1000)}k chars` : ""}</span>
                         </li>
                       );
                     })}
-                    {job.status === "running" && !job.steps.length && <li className="flex items-center gap-2 text-sm"><Loader2 className="h-3.5 w-3.5 animate-spin text-pink-300" /> Starting…</li>}
+                    {job.status === "running" && !job.steps.length && <li className="flex items-center gap-2 text-sm"><Loader2 className="h-3.5 w-3.5 animate-spin text-accent" /> Starting…</li>}
                   </ul>
-                  {job.status === "error" && <p className="mt-2 text-sm text-pink-300">{job.error}</p>}
+                  {job.status === "error" && <p className="mt-2 text-sm text-accent">{job.error}</p>}
                 </div>
               </div>
             )}
-            {project?.status === "error" && !job && <p className="rounded-xl border border-pink-500/30 bg-pink-500/10 p-3 text-sm text-pink-200">{project.error || "This clone failed."} <Link href="/dashboard" className="underline">Try again</Link></p>}
+            {project?.status === "error" && !job && <p className="rounded-xl border border-accent/40 bg-accent/10 p-3 text-sm text-accent">{project.error || "This clone failed."} <Link href="/dashboard" className="underline">Try again</Link></p>}
             {html && !editing && pageMessages.filter((m) => m.role === "user").length <= 1 && (
               <div className="space-y-2 pt-2">
                 <div className="text-xs text-faint">Try asking</div>
@@ -323,10 +323,10 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
 
           {/* composer */}
           <div className="border-t border-line p-3">
-            <div className={`rounded-2xl border bg-panel p-2 transition ${section ? "border-[#6d82ff]/50" : "border-line-strong"}`}>
+            <div className={`rounded-2xl border bg-panel p-2 transition ${section ? "border-[#fb460d]/50" : "border-line-strong"}`}>
               {section && (
                 <div className="mb-1.5 flex items-center gap-1.5 px-1">
-                  <span className="flex items-center gap-1 rounded-md bg-[#6d82ff]/20 px-2 py-0.5 text-xs text-[#aab6ff]"><MousePointerClick className="h-3 w-3" /> Editing: {section}</span>
+                  <span className="flex items-center gap-1 rounded-md bg-[#fb460d]/20 px-2 py-0.5 text-xs text-[#ff8a5c]"><MousePointerClick className="h-3 w-3" /> Editing: {section}</span>
                   <button onClick={() => setSection(null)} className="rounded p-0.5 text-faint hover:text-white" aria-label="Clear selection"><X className="h-3.5 w-3.5" /></button>
                 </div>
               )}
@@ -338,10 +338,10 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
               />
               <div className="flex items-center justify-between">
                 <button onClick={() => { setSelectMode((s) => !s); setTab("preview"); }} disabled={!html}
-                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition disabled:opacity-40 ${selectMode ? "bg-[#6d82ff] text-[#fff]" : "border border-line-strong text-muted hover:text-white"}`}>
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition disabled:opacity-40 ${selectMode ? "bg-[#fb460d] text-[#fff]" : "border border-line-strong text-muted hover:text-white"}`}>
                   <MousePointerClick className="h-3.5 w-3.5" /> {selectMode ? "Click a section…" : "Select section"}
                 </button>
-                <button onClick={() => send()} disabled={!input.trim() || editing || !html} className="grid h-8 w-8 place-items-center rounded-full bg-white text-black disabled:opacity-40" aria-label="Send">
+                <button onClick={() => send()} disabled={!input.trim() || editing || !html} className="grid h-8 w-8 place-items-center bg-accent text-[#141314] disabled:opacity-40" aria-label="Send">
                   {editing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
                 </button>
               </div>
@@ -411,15 +411,15 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
             {tab === "preview" && (
               previewSrc ? (
                 <div className="relative flex h-full justify-center overflow-auto p-3">
-                  {frameLoading && !building && !editing && <div className="absolute inset-3 z-10 grid place-items-center rounded-lg bg-panel"><Loader2 className="h-5 w-5 animate-spin text-pink-300" /></div>}
+                  {frameLoading && !building && !editing && <div className="absolute inset-3 z-10 grid place-items-center rounded-lg bg-panel"><Loader2 className="h-5 w-5 animate-spin text-accent" /></div>}
                   <iframe ref={iframe} title="Preview" srcDoc={previewSrc} onLoad={() => { syncIframe(); setTimeout(() => setFrameLoading(false), 350); }} sandbox="allow-scripts"
-                    className={`h-full rounded-lg border border-line bg-[#fff] shadow-2xl transition-[width] duration-300 ${selectMode ? "ring-2 ring-[#6d82ff]" : ""}`} style={{ width: deviceW }} />
+                    className={`h-full rounded-lg border border-line bg-[#fff] shadow-2xl transition-[width] duration-300 ${selectMode ? "ring-2 ring-[#fb460d]" : ""}`} style={{ width: deviceW }} />
                 </div>
               ) : <BuildingState job={job} thumbnail={project?.thumbnail} />
             )}
             {(building || editing) && tab === "preview" && previewSrc && (
               <div className="pointer-events-none absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/80 px-4 py-2 text-xs text-white backdrop-blur">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-pink-300" /> {building ? "Building live preview…" : "Applying your edit…"}
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" /> {building ? "Building live preview…" : "Applying your edit…"}
               </div>
             )}
             {tab === "code" && (
@@ -444,7 +444,7 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-6 backdrop-blur-sm" onClick={() => !react.busy && setReact(null)}>
           <div className="flex max-h-[85vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-line-strong bg-panel" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <span className="flex items-center gap-2 text-sm font-medium">{react.busy && <Loader2 className="h-4 w-4 animate-spin text-pink-300" />} page.tsx</span>
+              <span className="flex items-center gap-2 text-sm font-medium">{react.busy && <Loader2 className="h-4 w-4 animate-spin text-accent" />} page.tsx</span>
               <div className="flex gap-2">
                 <button disabled={react.busy} onClick={() => { navigator.clipboard.writeText(react.code); flash("Copied"); }} className="rounded-lg border border-line-strong px-2.5 py-1.5 text-xs hover:bg-white/10 disabled:opacity-50">Copy</button>
                 <button disabled={react.busy} onClick={() => download("page.tsx", react.code)} className="rounded-lg bg-white px-2.5 py-1.5 text-xs font-medium text-black disabled:opacity-50">Download</button>
@@ -455,13 +455,13 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
           </div>
         </div>
       )}
-      {toast && <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-4 py-2 text-sm font-medium text-black shadow-xl fade-up">{toast}</div>}
+      {toast && <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-[#141314] shadow-xl fade-up">{toast}</div>}
     </div>
   );
 }
 
 function Avatar() {
-  return <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#6d82ff] via-[#ff5c9d] to-[#ff9d4d]"><Sparkles className="h-3.5 w-3.5 text-[#fff]" /></span>;
+  return <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center bg-accent text-[#141314]"><Mark className="h-3.5 w-3.5" /></span>;
 }
 
 function MenuItem({ icon: Icon, label, sub, onClick }: { icon: typeof Copy; label: string; sub?: string; onClick: () => void }) {
@@ -481,10 +481,10 @@ function BuildingState({ job, thumbnail }: { job: JobState | null; thumbnail?: s
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {thumbnail ? <img src={thumbnail} alt="" className="h-full w-full object-cover object-top opacity-40 blur-[1px]" /> : <div className="shimmer h-full w-full" />}
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
-          <div className="absolute inset-x-0 top-0 h-1 overflow-hidden bg-white/5"><div className="h-full w-1/3 animate-[shimmer_1.4s_linear_infinite] bg-gradient-to-r from-transparent via-pink-400 to-transparent" style={{ backgroundSize: "200% 100%" }} /></div>
+          <div className="absolute inset-x-0 top-0 h-1 overflow-hidden bg-white/5"><div className="h-full w-1/3 animate-[shimmer_1.4s_linear_infinite] bg-gradient-to-r from-transparent via-accent to-transparent" style={{ backgroundSize: "200% 100%" }} /></div>
         </div>
         <p className="mt-6 flex items-center justify-center gap-2 text-sm text-muted">
-          {job?.status === "error" ? <span className="text-pink-300">{job.error}</span> : <><Loader2 className="h-4 w-4 animate-spin text-pink-300" /> {job?.steps.at(-1) ?? "Getting ready"}…</>}
+          {job?.status === "error" ? <span className="text-accent">{job.error}</span> : <><Loader2 className="h-4 w-4 animate-spin text-accent" /> {job?.steps.at(-1) ?? "Getting ready"}…</>}
         </p>
         <p className="mt-1 text-xs text-faint">Usually takes 1–2 minutes. You can leave this page; we&apos;ll keep working.</p>
       </div>
