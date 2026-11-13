@@ -5,6 +5,7 @@ import type { RawStyles } from "../types";
 
 const LOCAL_CHROME_PATHS = [
   process.env.CHROME_PATH,
+  "/opt/anyone-system/bin/chromium",
   "/usr/bin/chromium",
   "/usr/bin/chromium-browser",
   "/usr/bin/google-chrome",
