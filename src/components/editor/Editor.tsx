@@ -49,6 +49,7 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
   const [menu, setMenu] = useState<null | "export" | "versions" | "pages">(null);
   const [react, setReact] = useState<{ code: string; busy: boolean } | null>(null);
   const [toast, setToast] = useState("");
+  const [frameLoading, setFrameLoading] = useState(true);
   const iframe = useRef<HTMLIFrameElement>(null);
   const chatEnd = useRef<HTMLDivElement>(null);
 
@@ -123,7 +124,8 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
     const t = setTimeout(() => {
       if (streaming && !/<body/i.test(shownHtml)) return;
       lastPush.current = Date.now();
-      setPreviewSrc(withEditorScript(shownHtml));
+      const next = withEditorScript(shownHtml);
+      setPreviewSrc((cur) => { if (cur !== next && !streaming) setFrameLoading(true); return next; });
     }, wait);
     return () => clearTimeout(t);
   }, [shownHtml, job?.status, editing]);
@@ -406,8 +408,9 @@ export function Editor({ projectId, user }: { projectId: string; user: { name: s
           <div className="relative min-h-0 flex-1 bg-[#0d0d12]">
             {tab === "preview" && (
               previewSrc ? (
-                <div className="flex h-full justify-center overflow-auto p-3">
-                  <iframe ref={iframe} title="Preview" srcDoc={previewSrc} onLoad={syncIframe} sandbox="allow-scripts"
+                <div className="relative flex h-full justify-center overflow-auto p-3">
+                  {frameLoading && !building && !editing && <div className="absolute inset-3 z-10 grid place-items-center rounded-lg bg-panel"><Loader2 className="h-5 w-5 animate-spin text-pink-300" /></div>}
+                  <iframe ref={iframe} title="Preview" srcDoc={previewSrc} onLoad={() => { syncIframe(); setTimeout(() => setFrameLoading(false), 350); }} sandbox="allow-scripts"
                     className={`h-full rounded-lg border border-line bg-white shadow-2xl transition-[width] duration-300 ${selectMode ? "ring-2 ring-[#6d82ff]" : ""}`} style={{ width: deviceW }} />
                 </div>
               ) : <BuildingState job={job} thumbnail={project?.thumbnail} />

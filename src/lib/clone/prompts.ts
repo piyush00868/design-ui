@@ -10,6 +10,7 @@ Hard rules:
 - Recreate EVERY section in the outline, in order, top to bottom. Match the screenshots: section order, background colors, column counts, alignment, spacing rhythm, font sizes and weights, button styles, card styles, borders, radii.
 - Use the REAL text from the outline verbatim (headlines, paragraphs, nav labels, button labels, footer links). Never use lorem ipsum.
 - Use the REAL image URLs from the outline in <img> tags (with the same aspect ratio, object-cover). For logos rendered as SVG, use a clean text wordmark or simple inline SVG. For product screenshots you cannot reference, build a convincing UI mock with divs.
+- Product screenshots / app UI mockups (dense clusters of small labels like sidebars, issue lists, dashboards) must be rebuilt as a COMPACT VISUAL APP WINDOW: a bordered rounded frame with a sidebar, a list/table and a detail pane laid out side by side with small text, exactly like the screenshot shows. Never dump those labels as a long vertical list of text. Keep the mock at roughly the height seen in the screenshot.
 - Use inline SVG icons (lucide style, stroke 1.5-2) where icons appear.
 - The top-level wrapper of each major section MUST be a <header>, <section> or <footer> element with attribute data-section="<kebab-name>" (e.g. data-section="hero", data-section="logo-cloud", data-section="features", data-section="footer"). Names must be unique.
 - Responsive: looks right at 1440px and collapses gracefully on mobile (stack columns, hamburger-free simple nav is fine).
